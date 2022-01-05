@@ -147,7 +147,7 @@ def train(fold, plane, batch_size, nb_epoch,init_lr):
     print ('		Creating and compiling model...')
     print ('-'*80)
 
-    model = get_unet((imgs_row, imgs_col), pool_size=(2, 2, 2), init_lr=init_lr)
+    model = get_unet(imgs_row, imgs_col, pool_size=(2, 2, 2), init_lr=init_lr)
     print (model.summary())
 
     print ('-'*80)
