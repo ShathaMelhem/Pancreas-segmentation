@@ -1,9 +1,9 @@
 #!/bin/sh
 
 # directory of project folder
-DIR="/Users/yijun/panc"
-DATADIR="${DIR}/data"
-CODEDIR="${DIR}/repo"
+
+DATADIR="/content/drive/MyDrive/dataset_npy"
+CODEDIR="/content/drive/MyDrive/dataset_npy"
 
 
 # which fold to experiment, set it to 0 / 1/ 2/ 3
@@ -38,4 +38,4 @@ python data.py ${DATADIR} ${cur_fold} Z ${ZMAX} ${YMAX} ${XMAX} ${MARGIN} ${ORGA
 python train.py ${DATADIR} ${cur_fold} Z ${epoch} ${init_lr}
 
 # test the model
-python testvis.py ${DATADIR} ${model_test} ${cur_fold} Z ${ZMAX} ${YMAX} ${XMAX} ${HIGH_RANGE} ${LOW_RANGE} ${MARGIN} ${vis}
+#python testvis.py ${DATADIR} ${model_test} ${cur_fold} Z ${ZMAX} ${YMAX} ${XMAX} ${HIGH_RANGE} ${LOW_RANGE} ${MARGIN} ${vis}
