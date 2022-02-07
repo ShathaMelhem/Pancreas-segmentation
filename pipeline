@@ -25,7 +25,7 @@ init_lr=1e-5
 # model to test
 model_test=unet_fd${cur_fold}_Z_ep${epoch}_lr${init_lr}
 # if want to view visualization of model's prediction slice by slice, set vis to true
-vis=false
+vis=true
 
 # ---------------- programs -------------------
 # slice the 3d volumn to 2d slices
