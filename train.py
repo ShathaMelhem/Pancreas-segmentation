@@ -43,7 +43,7 @@ init_lr = float(sys.argv[5])
 # ----- Dice Coefficient and cost function for training -----
 smooth = 1.
 
-ef dice_coef(y_true, y_pred):
+def dice_coef(y_true, y_pred):
     y_true_f = K.flatten(y_true)
     y_pred_f = K.flatten(y_pred)
     intersection = K.sum(y_true_f * y_pred_f)
@@ -93,7 +93,7 @@ def train(fold, plane, batch_size, nb_epoch,init_lr):
     print ('		Creating and compiling model...')
     print ('-'*80)
 
-    model = build_model('convnext_tiny', num_classes=2)
+    model = build_model('convnext_tiny')
     model.compile(optimizer=Adam(lr=init_lr), loss=dice_coef_loss, metrics=[dice_coef])
     print (model.summary())
 
