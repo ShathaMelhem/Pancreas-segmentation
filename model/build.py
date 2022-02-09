@@ -8,6 +8,6 @@ depths_dims = dict(
     convnext_xlarge = (dict(depths=[3, 3, 27, 3], dims=[256, 512, 1024, 2048])),
 )
 
-def build_model(name):
-    model = ConvNext(**depths_dims[name])
+def build_model(name, **kwargs):
+    model = ConvNext(**depths_dims[name],**kwargs)
     return model
