@@ -68,7 +68,7 @@ class ConvNext(tf.keras.Model):
         layer_scale_init_value (float): Init value for Layer Scale. Default: 1e-6.
     """
 
-    def __init__(self, num_classes=2,
+    def __init__(self,
                  depths=[3, 3, 9, 3], dims=[96, 192, 384, 768], drop_path_rate=0.,
                  layer_scale_init_value=1e-6):
         super().__init__()
@@ -80,8 +80,7 @@ class ConvNext(tf.keras.Model):
         self.downsample_layers += [Downsampling(dim) for dim in dims[1:]]
         self.convnext_blocks = [tf.keras.Sequential([ConvNextBlock(dim, drop_path_rate, layer_scale_init_value) for _ in range(
             depths[i])]) for i, dim in enumerate(dims)]
-        self.head = layers.Dense(
-            num_classes, kernel_initializer=kernel_initial, bias_initializer=bias_initial)
+        self.head = layers.Conv2D(kernel_size=1,activation = 'sigmoid')
         self.gap = layers.GlobalAveragePooling2D()
         self.norm = layers.LayerNormalization()
         
