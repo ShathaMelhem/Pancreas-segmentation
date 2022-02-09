@@ -93,7 +93,7 @@ def train(fold, plane, batch_size, nb_epoch,init_lr):
     print ('		Creating and compiling model...')
     print ('-'*80)
 
-    model = build_model('convnext_tiny',[imags_row,imgs_col])
+    model = build_model('convnext_tiny', input_size=[imags_row,imgs_col])
     model.compile(optimizer=Adam(lr=init_lr), loss=dice_coef_loss, metrics=[dice_coef])
     print (model.summary())
 
