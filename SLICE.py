@@ -10,31 +10,40 @@ folds = int(sys.argv[3])
 low_range = int(sys.argv[4])
 high_range = int(sys.argv[5])
 
-image_list = []
-image_filename = []
-keyword = ''
-for directory, _, file_ in os.walk(image_path):
-	for filename in sorted(file_):
-		if keyword in filename:
-			image_list.append(os.path.join(directory, filename))
-			image_filename.append(os.path.splitext(filename)[0])
-label_list = []
-label_filename = []
-for directory, _, file_ in os.walk(label_path):
-	for filename in sorted(file_):
-		if keyword in filename:
-			label_list.append(os.path.join(directory, filename))
-			label_filename.append(os.path.splitext(filename)[0])
-if len(image_list) != len(label_list):
-	exit('Error: the number of labels and the number of images are not equal!')
-total_samples = len(image_list)
 
-for plane in ['X', 'Y', 'Z']:
+if __name__=="__main__":
+    # get image list
+    image_list = []
+    image_filename = []
+    keyword = ''
+    for directory, _, file_ in os.walk(image_path):
+	for filename in sorted(file_):
+	    if keyword in filename:
+		image_list.append(os.path.join(directory, filename))
+		image_filename.append(os.path.splitext(filename)[0])
+
+    # get label list
+    label_list = []
+    label_filename = []
+    for directory, _, file_ in os.walk(label_path):
+	for filename in sorted(file_):
+	    if keyword in filename:
+		label_list.append(os.path.join(directory, filename))
+		label_filename.append(os.path.splitext(filename)[0])
+
+    # check if #image equals #labels
+    if len(image_list) != len(label_list):
+	exit('Error: the number of labels and the number of images are not equal!')
+
+
+    total_samples = len(image_list)
+    for plane in ['X', 'Y', 'Z']:
 	output = open(list_training[plane], 'w') # create txt
 	output.close()
-print('Initialization starts.')
+	
+    print('Initialization starts.')
 
-for i in range(total_samples):
+    for i in range(total_samples):
 	start_time = time.time()
 	print('Processing ' + str(i + 1) + ' out of ' + str(total_samples) + ' files.')
 	image = np.load(image_list[i])
@@ -109,20 +118,20 @@ for i in range(total_samples):
 	print('Processed ' + str(i + 1) + ' out of ' + str(total_samples) + ' files: ' + \
 		str(time.time() - start_time) + ' second(s) elapsed.')
 
-print('Writing training image list.')
-for f in range(folds):
+    print('Writing training image list.')
+    for f in range(folds):
 	list_training_ = training_set_filename(f)
 	output = open(list_training_, 'w')
 	for i in range(total_samples):
 		if in_training_set(total_samples, i, folds, f):
 			output.write(str(i) + ' ' + image_list[i] + ' ' + label_list[i] + '\n')
 	output.close()
-print('Writing testing image list.')
-for f in range(folds):
+    print('Writing testing image list.')
+    for f in range(folds):
 	list_testing_ = testing_set_filename(f)
 	output = open(list_testing_, 'w')
 	for i in range(total_samples):
 		if not in_training_set(total_samples, i, folds, f):
 			output.write(str(i) + ' ' + image_list[i] + ' ' + label_list[i] + '\n')
 	output.close()
-print('Initialization is done.')
+    print('Initialization is done.')
