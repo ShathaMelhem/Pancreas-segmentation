@@ -82,14 +82,14 @@ def DSC_computation(label, pred):
 # ------ defining the common variables used throughout the entire flowchart ------
 image_path = os.path.join(data_path, 'images')
 image_path_ = {}
-for plane in ['Z']:
+for plane in ['X', 'Y', 'Z']:
     image_path_[plane] = os.path.join(data_path, 'images_' + plane)
     if not os.path.exists(image_path_[plane]):
         os.makedirs(image_path_[plane])
 
 label_path = os.path.join(data_path, 'labels')
 label_path_ = {}
-for plane in ['Z']:
+for plane in ['X', 'Y', 'Z']:
     label_path_[plane] = os.path.join(data_path, 'labels_' + plane)
     if not os.path.exists(label_path_[plane]):
         os.makedirs(label_path_[plane])
@@ -99,7 +99,7 @@ if not os.path.exists(list_path):
     os.makedirs(list_path)
 
 list_training = {}
-for plane in ['Z']:
+for plane in ['X', 'Y','Z']:
     list_training[plane] = os.path.join(list_path, 'training_' + plane + '.txt')
 
 model_path = os.path.join(data_path, 'models')
