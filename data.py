@@ -53,48 +53,137 @@ def create_train_data(current_fold, plane):
         raise ValueError('slice number does not equal label number!')
 
     total = len(create_slice_list)
+    if plane=='Z':
+        img_rows = XMAX
+        img_cols = YMAX
+        img_depth= ZMAX
 
-    img_rows = XMAX
-    img_cols = YMAX
+        imgs = np.ndarray((total,img_rows,img_cols), dtype = npdtype)
+        imgs_mask = np.ndarray((total,img_cols,img_cols), dtype = npdtype)
 
-    imgs = np.ndarray((total, img_rows, img_cols), dtype = npdtype)
-    imgs_mask = np.ndarray((total, img_rows, img_cols), dtype = npdtype)
+        print('-'*30)
+        print('  Creating training data...')
+        print('-'*30)
 
-    print('-'*30)
-    print('  Creating training data...')
-    print('-'*30)
+        for i in range(len(create_slice_list)):
+          cur_im = np.load(create_slice_list[i])
+          cur_mask = np.load(create_label_list[i])
 
-    for i in range(len(create_slice_list)):
-        cur_im = np.load(create_slice_list[i])
-        cur_mask = np.load(create_label_list[i])
+          cur_im = (cur_im - low_range) / float(high_range - low_range)
+          arr = np.nonzero(cur_mask)
 
-        cur_im = (cur_im - low_range) / float(high_range - low_range)
-        arr = np.nonzero(cur_mask)
+          width = cur_mask.shape[0]
+          height = cur_mask.shape[1]
 
-        width = cur_mask.shape[0]
-        height = cur_mask.shape[1]
+          minA = min(arr[0])
+          maxA = max(arr[0])
+          minB = min(arr[1])
+          maxB = max(arr[1])
 
-        minA = min(arr[0])
-        maxA = max(arr[0])
-        minB = min(arr[1])
-        maxB = max(arr[1])
-
-        # with margin
-        cropped_im = cur_im[max(minA - margin, 0): min(maxA + margin + 1, width), \
+          # with margin
+          cropped_im = cur_im[max(minA - margin, 0): min(maxA + margin + 1, width), \
                                     max(minB - margin, 0): min(maxB + margin + 1, height)]
-        cropped_mask = cur_mask[max(minA - margin, 0): min(maxA + margin + 1, width), \
+          print(cropped_im.shape)
+          cropped_mask = cur_mask[max(minA - margin, 0): min(maxA + margin + 1, width), \
                                     max(minB - margin, 0): min(maxB + margin + 1, height)]
 
-        imgs[i] = pad_2d(cropped_im, plane, 0, XMAX, YMAX, ZMAX)
-        imgs_mask[i] = pad_2d(cropped_mask, plane, 0, XMAX, YMAX, ZMAX)
+          imgs[i] = pad_2d(cropped_im, plane, 0, XMAX, YMAX, ZMAX)
+          imgs_mask[i] = pad_2d(cropped_mask, plane, 0, XMAX, YMAX, ZMAX)
 
-        if i % 100 == 0:
+          if i % 100 == 0:
             print('Done: {0}/{1} slices'.format(i, total))
 
-    np.save('imgs_train_%s_%s.npy'%(current_fold, plane), imgs)
-    np.save('masks_train_%s_%s.npy'%(current_fold, plane), imgs_mask)
-    print('Training data created for fold %s, plane %s'%(current_fold, plane))
+        np.save('imgs_train_%s_%s.npy'%(current_fold, plane), imgs)
+        np.save('masks_train_%s_%s.npy'%(current_fold, plane), imgs_mask)
+        print('Training data created for fold %s, plane %s'%(current_fold, plane))
 
+    elif plane=='X':
+        img_rows = XMAX
+        img_cols = YMAX
+        img_depth= ZMAX
+
+        imgs = np.ndarray((total,imd_rows,img_depth), dtype = npdtype)
+        imgs_mask = np.ndarray((total,img_rows,img_depth), dtype = npdtype)
+
+        print('-'*30)
+        print('  Creating training data...')
+        print('-'*30)
+
+        for i in range(len(create_slice_list)):
+          cur_im = np.load(create_slice_list[i])
+          cur_mask = np.load(create_label_list[i])
+
+          cur_im = (cur_im - low_range) / float(high_range - low_range)
+          arr = np.nonzero(cur_mask)
+
+          width = cur_mask.shape[0]
+          height = cur_mask.shape[1]
+
+          minA = min(arr[0])
+          maxA = max(arr[0])
+          minB = min(arr[1])
+          maxB = max(arr[1])
+
+          # with margin
+          cropped_im = cur_im[max(minA - margin, 0): min(maxA + margin + 1, width), \
+                                    max(minB - margin, 0): min(maxB + margin + 1, height)]
+          print(cropped_im.shape)
+          cropped_mask = cur_mask[max(minA - margin, 0): min(maxA + margin + 1, width), \
+                                    max(minB - margin, 0): min(maxB + margin + 1, height)]
+
+          imgs[i] = pad_2d(cropped_im, plane, 0, XMAX, YMAX, ZMAX)
+          imgs_mask[i] = pad_2d(cropped_mask, plane, 0, XMAX, YMAX, ZMAX)
+
+          if i % 100 == 0:
+            print('Done: {0}/{1} slices'.format(i, total))
+
+        np.save('imgs_train_%s_%s.npy'%(current_fold, plane), imgs)
+        np.save('masks_train_%s_%s.npy'%(current_fold, plane), imgs_mask)
+        print('Training data created for fold %s, plane %s'%(current_fold, plane))
+
+    elif plane=='Y':
+        img_rows = XMAX
+        img_cols = YMAX
+        img_depth= ZMAX
+
+        imgs = np.ndarray((total,img_cols,img_depth), dtype = npdtype)
+        imgs_mask = np.ndarray((total,img_cols,img_depth), dtype = npdtype)
+
+        print('-'*30)
+        print('  Creating training data...')
+        print('-'*30)
+
+        for i in range(len(create_slice_list)):
+          cur_im = np.load(create_slice_list[i])
+          cur_mask = np.load(create_label_list[i])
+
+          cur_im = (cur_im - low_range) / float(high_range - low_range)
+          arr = np.nonzero(cur_mask)
+
+          width = cur_mask.shape[0]
+          height = cur_mask.shape[1]
+
+          minA = min(arr[0])
+          maxA = max(arr[0])
+          minB = min(arr[1])
+          maxB = max(arr[1])
+
+          # with margin
+          cropped_im = cur_im[max(minA - margin, 0): min(maxA + margin + 1, width), \
+                                    max(minB - margin, 0): min(maxB + margin + 1, height)]
+          print(cropped_im.shape)
+          cropped_mask = cur_mask[max(minA - margin, 0): min(maxA + margin + 1, width), \
+                                    max(minB - margin, 0): min(maxB + margin + 1, height)]
+
+          imgs[i] = pad_2d(cropped_im, plane, 0, XMAX, YMAX, ZMAX)
+          imgs_mask[i] = pad_2d(cropped_mask, plane, 0, XMAX, YMAX, ZMAX)
+
+          if i % 100 == 0:
+            print('Done: {0}/{1} slices'.format(i, total))
+
+        np.save('imgs_train_%s_%s.npy'%(current_fold, plane), imgs)
+        np.save('masks_train_%s_%s.npy'%(current_fold, plane), imgs_mask)
+        print('Training data created for fold %s, plane %s'%(current_fold, plane))
 
 def load_train_data(current_fold, plane):
     imgs_train = np.load('imgs_train_%s_%s.npy'%(current_fold, plane))
