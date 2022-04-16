@@ -83,7 +83,6 @@ def create_train_data(current_fold, plane):
           # with margin
           cropped_im = cur_im[max(minA - margin, 0): min(maxA + margin + 1, width), \
                                     max(minB - margin, 0): min(maxB + margin + 1, height)]
-          print(cropped_im.shape)
           cropped_mask = cur_mask[max(minA - margin, 0): min(maxA + margin + 1, width), \
                                     max(minB - margin, 0): min(maxB + margin + 1, height)]
 
@@ -127,7 +126,6 @@ def create_train_data(current_fold, plane):
           # with margin
           cropped_im = cur_im[max(minA - margin, 0): min(maxA + margin + 1, width), \
                                     max(minB - margin, 0): min(maxB + margin + 1, height)]
-          print(cropped_im.shape)
           cropped_mask = cur_mask[max(minA - margin, 0): min(maxA + margin + 1, width), \
                                     max(minB - margin, 0): min(maxB + margin + 1, height)]
 
@@ -171,7 +169,6 @@ def create_train_data(current_fold, plane):
           # with margin
           cropped_im = cur_im[max(minA - margin, 0): min(maxA + margin + 1, width), \
                                     max(minB - margin, 0): min(maxB + margin + 1, height)]
-          print(cropped_im.shape)
           cropped_mask = cur_mask[max(minA - margin, 0): min(maxA + margin + 1, width), \
                                     max(minB - margin, 0): min(maxB + margin + 1, height)]
 
