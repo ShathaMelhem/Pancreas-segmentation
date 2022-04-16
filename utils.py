@@ -39,7 +39,10 @@ def pad_2d(image, plane, padval, xmax, ymax, zmax):
     """
 
     if plane == 'X':
-        npad = ((0, ymax - image.shape[1]), (0, zmax - image.shape[2]))
+        npad = ((0, ymax - image.shape[0]), (0, zmax - image.shape[1]))
+        padded = np.pad(image, pad_width=npad, mode='constant', constant_values = padval)
+    elif plane=='Y':
+        npad = ((0, xmax - image.shape[0]), (0, zmax - image.shape[1]))
         padded = np.pad(image, pad_width=npad, mode='constant', constant_values = padval)
     elif plane =='Z':
         npad = ((0, xmax - image.shape[0]), (0, ymax - image.shape[1]))
