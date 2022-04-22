@@ -59,7 +59,7 @@ def create_train_data(current_fold, plane):
         img_depth= ZMAX
 
         imgs = np.ndarray((total,img_rows,img_cols), dtype = npdtype)
-        imgs_mask = np.ndarray((total,img_cols,img_cols), dtype = npdtype)
+        imgs_mask = np.ndarray((total,img_rows,img_cols), dtype = npdtype)
 
         print('-'*30)
         print('  Creating training data...')
@@ -101,8 +101,8 @@ def create_train_data(current_fold, plane):
         img_cols = YMAX
         img_depth= ZMAX
 
-        imgs = np.ndarray((total,imd_rows,img_depth), dtype = npdtype)
-        imgs_mask = np.ndarray((total,img_rows,img_depth), dtype = npdtype)
+        imgs = np.ndarray((total,imd_cols,img_depth), dtype = npdtype)
+        imgs_mask = np.ndarray((total,img_cols,img_depth), dtype = npdtype)
 
         print('-'*30)
         print('  Creating training data...')
@@ -144,8 +144,8 @@ def create_train_data(current_fold, plane):
         img_cols = YMAX
         img_depth= ZMAX
 
-        imgs = np.ndarray((total,img_cols,img_depth), dtype = npdtype)
-        imgs_mask = np.ndarray((total,img_cols,img_depth), dtype = npdtype)
+        imgs = np.ndarray((total,img_rows,img_depth), dtype = npdtype)
+        imgs_mask = np.ndarray((total,img_rows,img_depth), dtype = npdtype)
 
         print('-'*30)
         print('  Creating training data...')
