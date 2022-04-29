@@ -65,8 +65,8 @@ def get_unet(img_rows, img_cols, flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
     conv2 = Conv2D(flt*2, (3, 3), activation='relu', padding='same')(conv2)
     pool2 = MaxPooling2D(pool_size=(2, 2))(conv2)
 
-    conv3 = Conv2D(flt*4, (3, 3), activation='gelu', padding='same')(pool2)
-    conv3 = Conv2D(flt*4, (3, 3), activation='gelu', padding='same')(conv3)
+    conv3 = Conv2D(flt*4, (3, 3), activation='relu', padding='same')(pool2)
+    conv3 = Conv2D(flt*4, (3, 3), activation='relu', padding='same')(conv3)
     pool3 = MaxPooling2D(pool_size=(2, 2))(conv3)
 
     conv4 = Conv2D(flt*8, (3, 3), activation='relu', padding='same')(pool3)
