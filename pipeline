@@ -29,7 +29,7 @@ vis=true
 
 # ---------------- programs -------------------
 # slice the 3d volumn to 2d slices
-python pclice.py ${DATADIR} ${ORGAN_NUMBER} ${FOLDS} ${LOW_RANGE} ${HIGH_RANGE}
+python pslice.py ${DATADIR} ${ORGAN_NUMBER} ${FOLDS} ${LOW_RANGE} ${HIGH_RANGE}
 
 # create data for training
 python data.py ${DATADIR} ${cur_fold} Z ${ZMAX} ${YMAX} ${XMAX} ${MARGIN} ${ORGAN_NUMBER} ${LOW_RANGE} ${HIGH_RANGE}
