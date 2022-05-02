@@ -10,16 +10,20 @@ from keras.utils.generic_utils import register_keras_serializable
 from keras.utils.tf_utils import shape_type_conversion
 from keras.models import Model
 from keras.layers import Input, Activation, concatenate, Conv2D, MaxPooling2D, Conv2DTranspose, ZeroPadding2D, add
-from keras.optimizers import Adam, SGD
+from tensorflow.keras.optimizers import Adam, SGD
 from keras.callbacks import ModelCheckpoint, CSVLogger
 from keras import backend as K
 from keras import losses
-
+import math
+from keras import activations, layers
+from keras.utils.conv_utils import normalize_tuple
+from keras.utils.generic_utils import register_keras_serializable
+from keras.utils.tf_utils import shape_type_conversion
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import pandas as pd
 import csv
-
+freom tensorflow.keras.activations import gelu
 from utils import *
 from data import load_train_data
 
@@ -141,7 +145,7 @@ class SpatialAttention(layers.Layer):
     def compute_output_shape(self, input_shape):
         return 
 
-def get_unet((img_rows, img_cols), flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
+def get_unet(img_rows, img_cols, flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
     """build and compile Neural Network"""
 
     print "start building NN"
@@ -233,16 +237,16 @@ def train(fold, plane, batch_size, nb_epoch,init_lr):
     imgs_mask_train = imgs_mask_train.astype('float32')
 
     # ---------------------- Create, compile, and train model ------------------------
-    print '-'*80
-    print '		Creating and compiling model...'
-    print '-'*80
+    print ('-'*80)
+    print ('		Creating and compiling model...')
+    print ('-'*80)
 
-    model = get_unet((imgs_row, imgs_col), pool_size=(2, 2, 2), init_lr=init_lr)
-    print model.summary()
+    model = get_unet(imgs_row, imgs_col, pool_size=(2, 2, 2), init_lr=init_lr)
+    print (model.summary())
 
-    print '-'*80
-    print '		Fitting model...'
-    print '-'*80
+    print ('-'*80)
+    print ('		Fitting model...')
+    print ('-'*80)
 
     ver = 'unet_fd%s_%s_ep%s_lr%s.csv'%(cur_fold, plane, epoch, init_lr)
     csv_logger = CSVLogger(log_path + ver)
@@ -260,4 +264,4 @@ if __name__ == "__main__":
 
     train(cur_fold, plane, batch_size, epoch, init_lr)
 
-    print "training done" 
+    print ("training done") 
