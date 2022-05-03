@@ -56,138 +56,60 @@ def dice_coef_loss(y_true, y_pred):
     return  -dice_coef(y_true, y_pred)
   
 
-@register_keras_serializable(package='TFVan')
-class Attention(layers.Layer):
-    def __init__(self, kernel_size, **kwargs):
-        super().__init__(**kwargs)
-        self.input_spec = layers.InputSpec(ndim=4)
-
-        self.kernel_size = normalize_tuple(kernel_size, 2, 'kernel_size')
-
-        self.dilation_rate = Attention.dilation(self.kernel_size[0]), Attention.dilation(self.kernel_size[1])
-        self.kernel_size_dw = self.dilation_rate[0] * 2 - 1, self.dilation_rate[1] * 2 - 1
-        self.kernel_size_dwd = math.ceil(self.kernel_size[0] / self.dilation_rate[0]), \
-                               math.ceil(self.kernel_size[1] / self.dilation_rate[1])
-
-    @staticmethod
-    def dilation(kernel):
-        # Choose dilation rate with respect to minimum multiplications
-        # import sympy
-        # kernel, dilation = sympy.symbols('kernel,dilation', positive=True)
-        # kernel1, kernel2 = 2 * dilation - 1, kernel / dilation
-        # mults = kernel1 ** 2 + kernel2 ** 2
-        # dmult = sympy.diff(mults, dilation)
-        # sympy.solveset(dmult, dilation)
-
-        root_k6_k4 = (kernel ** 6 / 1728 + kernel ** 4 / 65536) ** (1 / 2)
-        root_k2_k6_k4 = 2 * (root_k6_k4 - kernel ** 2 / 256) ** (1 / 3)
-        frac_k2_d6 = kernel ** 2 / (3 * root_k2_k6_k4)
-        part_1 = (root_k2_k6_k4 - frac_k2_d6 + 1 / 16) ** (1 / 2)
-        part_2 = (frac_k2_d6 - root_k2_k6_k4 + 1 / 8 + 1 / (32 * part_1)) ** (1 / 2)
-
-        dilation = part_2 / 2 - part_1 / 2 + 1 / 8
-
-        if not isinstance(dilation, float):
-            raise ValueError(f'Can\'t estimate dilation for kernel size {kernel}')
-
-        return round(dilation)
-
-    @shape_type_conversion
-    def build(self, input_shape):
-        channels = input_shape[-1]
-        if channels is None:
-            raise ValueError('Channel dimension of the inputs should be defined. Found `None`.')
-        self.input_spec = layers.InputSpec(ndim=4, axes={-1: channels})
-
-        self.dw = layers.DepthwiseConv2D(self.kernel_size_dw, padding='same', name='conv0')
-        self.dwd = layers.DepthwiseConv2D(
-            self.kernel_size_dwd, padding='same', dilation_rate=self.dilation_rate, name='conv_spatial')
-        self.pw = layers.Conv2D(channels, 1, name='conv1')
-
-        super().build(input_shape)
-
-    def call(self, inputs, **kwargs):
-        attn = self.dw(inputs)
-        attn = self.dwd(attn)
-        attn = self.pw(attn)
-        outputs = inputs * attn
-
-        return outputs
-@register_keras_serializable(package='TFVan')
-class SpatialAttention(layers.Layer):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.input_spec = layers.InputSpec(ndim=4)
-
-    @shape_type_conversion
-    def build(self, input_shape):
-        channels = input_shape[-1]
-        if channels is None:
-            raise ValueError('Channel dimension of the inputs should be defined. Found `None`.')
-        self.input_spec = layers.InputSpec(ndim=4, axes={-1: channels})
-
-        self.proj1 = layers.Conv2D(channels, 1, name='proj_1')
-        self.attend = Attention(21, name='spatial_gating_unit')
-        self.proj2 = layers.Conv2D(channels, 1, name='proj_2')
-
-        super().build(input_shape)
-
-    def call(self, inputs, **kwargs):
-        outputs = self.proj1(inputs)
-        outputs = activations.gelu(outputs)
-        outputs = self.attend(outputs)
-        outputs = self.proj2(outputs)
-        outputs = outputs + inputs
-
-        return outputs
-
-    @shape_type_conversion
-    def compute_output_shape(self, input_shape):
-        return 
-
 def get_unet(img_rows, img_cols, flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
     """build and compile Neural Network"""
 
     print "start building NN"
     inputs = Input((img_rows, img_cols, 1))
 
-    conv1 = Conv2D(flt, (3, 3), activation='relu', padding='same')(inputs)
-    conv1 = Attnetion(kernel_size=3,input_shape=conv1)
-    #conv1 = Conv2D(flt, (3, 3), activation='relu', padding='same')(conv1)
-    pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
+    conv1 = Conv2D(flt, activation='relu', padding='same')(inputs)
+    convcopy= conv1
+    dw = layers.DepthwiseConv2D(flt,(5,5), padding='same',groups=flt)(conv1)
+    dwd = layers.DepthwiseConv2D(flt,(7,7), padding='same',groups=flt, dilation_rate=3)(dw)
+    pw = layers.Conv2D(flt, (1,1))(dwd)
+    Lconv1=convcopy*pw
+    pool1 = MaxPooling2D(pool_size=(2, 2))(Lconv1)
 
-    conv2 = Conv2D(flt*2, (3, 3), activation='relu', padding='same')(pool1)
-    conv2 = Attnetion(kernel_size=3,input_shape=conv2)
-    #conv2 = Conv2D(flt*2, (3, 3), activation='relu', padding='same')(conv2)
-    pool2 = MaxPooling2D(pool_size=(2, 2))(conv2)
+    conv2 = Conv2D(flt*2, activation='relu', padding='same')(pool1)
+    convcopy= conv2
+    dw = layers.DepthwiseConv2D(flt,(5,5), padding='same',groups=flt)(conv2)
+    dwd = layers.DepthwiseConv2D(flt,(7,7), padding='same',groups=flt, dilation_rate=3)(dw)
+    pw = layers.Conv2D(flt, (1,1))(dwd)
+    Lconv2=convcopy*pw
+    pool2 = MaxPooling2D(pool_size=(2, 2))(Lconv2)
 
-    conv3 = Conv2D(flt*4, (3, 3), activation='relu', padding='same')(pool2)
-    conv3 = Attnetion(kernel_size=3,input_shape=conv3)
-    #conv3 = Conv2D(flt*4, (3, 3), activation='relu', padding='same')(conv3)
-    pool3 = MaxPooling2D(pool_size=(2, 2))(conv3)
+    conv3 = Conv2D(flt*4,activation='relu', padding='same')(pool2)
+    convcopy= conv3
+    dw = layers.DepthwiseConv2D(flt,(5,5), padding='same',groups=flt)(conv3)
+    dwd = layers.DepthwiseConv2D(flt,(7,7), padding='same',groups=flt, dilation_rate=3)(dw)
+    pw = layers.Conv2D(flt, (1,1))(dwd)
+    Lconv3=convcopy*pw
+    pool3 = MaxPooling2D(pool_size=(2, 2))(Lconv3)
 
-    conv4 = Conv2D(flt*8, (3, 3), activation='relu', padding='same')(pool3)
-    conv4 = Attnetion(kernel_size=3,input_shape=conv4)
-    #conv4 = Conv2D(flt*8, (3, 3), activation='relu', padding='same')(conv4)
-    pool4 = MaxPooling2D(pool_size=(2, 2))(conv4)
+    conv4 = Conv2D(flt*8,activation='relu', padding='same')(pool3)
+    convcopy= conv4
+    dw = layers.DepthwiseConv2D(flt,(5,5), padding='same',groups=flt)(conv1)
+    dwd = layers.DepthwiseConv2D(flt,(7,7), padding='same',groups=flt, dilation_rate=3)(dw)
+    pw = layers.Conv2D(flt, (1,1))(dwd)
+    Lconv4=convcopy*pw
+    pool4 = MaxPooling2D(pool_size=(2, 2))(Lconv4)
 
     conv5 = Conv2D(flt*16, (3, 3), activation='relu', padding='same')(pool4)
-    conv5 = Attnetion(kernel_size=3,input_shape=conv5)
     conv5 = Conv2D(flt*8, (3, 3), activation='relu', padding='same')(conv5)
 
-    up6 = concatenate([Conv2DTranspose(flt*8, (2, 2), strides=(2, 2), padding='same')(conv5), conv4], axis=3)
+    up6 = concatenate([Conv2DTranspose(flt*8, (2, 2), strides=(2, 2), padding='same')(conv5), Lconv4], axis=3)
     conv6 = Conv2D(flt*8, (3, 3), activation='relu', padding='same')(up6)
     conv6 = Conv2D(flt*4, (3, 3), activation='relu', padding='same')(conv6)
 
-    up7 = concatenate([Conv2DTranspose(flt*4, (2, 2), strides=(2, 2), padding='same')(conv6), conv3], axis=3)
+    up7 = concatenate([Conv2DTranspose(flt*4, (2, 2), strides=(2, 2), padding='same')(conv6), Lconv3], axis=3)
     conv7 = Conv2D(flt*4, (3, 3), activation='relu', padding='same')(up7)
     conv7 = Conv2D(flt*2, (3, 3), activation='relu', padding='same')(conv7)
 
-    up8 = concatenate([Conv2DTranspose(flt*2, (2, 2), strides=(2, 2), padding='same')(conv7), conv2], axis=3)
+    up8 = concatenate([Conv2DTranspose(flt*2, (2, 2), strides=(2, 2), padding='same')(conv7), Lconv2], axis=3)
     conv8 = Conv2D(flt*2, (3, 3), activation='relu', padding='same')(up8)
     conv8 = Conv2D(flt, (3, 3), activation='relu', padding='same')(conv8)
 
-    up9 = concatenate([Conv2DTranspose(flt, (2, 2), strides=(2, 2), padding='same')(conv8), conv1], axis=3)
+    up9 = concatenate([Conv2DTranspose(flt, (2, 2), strides=(2, 2), padding='same')(conv8), Lconv1], axis=3)
     conv9 = Conv2D(flt, (3, 3), activation='relu', padding='same')(up9)
     conv9 = Conv2D(flt, (3, 3), activation='relu', padding='same')(conv9)
 
