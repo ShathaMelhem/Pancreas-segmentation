@@ -23,7 +23,6 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import pandas as pd
 import csv
-freom tensorflow.keras.activations import gelu
 from utils import *
 from data import load_train_data
 
@@ -65,56 +64,80 @@ def get_unet(img_rows, img_cols, flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
     conv1 = Conv2D(flt,(7,7),activation='relu', padding='same')(inputs)
     conv1= layers.BatchNormalization(epsilon=1.001e-5)(conv1)
     conv1= layers.BatchNormalization( epsilon=1.001e-5)(conv1)
-    conv1 = Conv2D(flt, 1,activation='relu')(conv1)
     convcopy= conv1
+    conv1 = Conv2D(flt, 1,activation='relu')(conv1)
     dw = layers.DepthwiseConv2D((5,5), padding='same')(conv1)
     dwd = layers.DepthwiseConv2D((7,7), padding='same', dilation_rate=3)(dw)
     pw = layers.Conv2D(flt, (1,1))(dwd)
     Lconv1=convcopy*pw
-    pool1 = MaxPooling2D(pool_size=(2, 2))(Lconv1)
+    conv1 = Conv2D(flt, 1,activation='relu')(Lconv1)
+    Fconv1=convcopy+conv1
+    print(Lconv1.shape)
+    pool1 = MaxPooling2D(pool_size=(2, 2))(Fconv1)
 
-    conv2 = Conv2D(flt*2, activation='relu', padding='same')(pool1)
+    conv2 = Conv2D(flt*2, (7,7),activation='relu', padding='same')(pool1)
+    conv2= layers.BatchNormalization(epsilon=1.001e-5)(conv2)
+    conv2= layers.BatchNormalization( epsilon=1.001e-5)(conv2)
     convcopy= conv2
-    dw = layers.DepthwiseConv2D((5,5), padding='same',groups=flt)(conv2)
-    dwd = layers.DepthwiseConv2D((7,7), padding='same',groups=flt, dilation_rate=3)(dw)
-    pw = layers.Conv2D(flt, (1,1))(dwd)
+    conv2 = Conv2D(flt*2, 1,activation='relu')(conv2)
+    dw = layers.DepthwiseConv2D((5,5), padding='same')(conv2)
+    dwd = layers.DepthwiseConv2D((7,7), padding='same', dilation_rate=3)(dw)
+    pw = layers.Conv2D(flt*2, (1,1))(dwd)
     Lconv2=convcopy*pw
-    pool2 = MaxPooling2D(pool_size=(2, 2))(Lconv2)
+    conv2 = Conv2D(flt*2, 1,activation='relu')(Lconv2)
+    Fconv2=convcopy+conv2
+    print(Lconv2.shape)
+    pool2 = MaxPooling2D(pool_size=(2, 2))(Fconv2)
 
-    conv3 = Conv2D(flt*4,activation='relu', padding='same')(pool2)
+    conv3 = Conv2D(flt*4,(7,7),activation='relu', padding='same')(pool2)
+    conv3= layers.BatchNormalization(epsilon=1.001e-5)(conv3)
+    conv3= layers.BatchNormalization( epsilon=1.001e-5)(conv3)
     convcopy= conv3
-    dw = layers.DepthwiseConv2D(flt,(5,5), padding='same',groups=flt)(conv3)
-    dwd = layers.DepthwiseConv2D(flt,(7,7), padding='same',groups=flt, dilation_rate=3)(dw)
-    pw = layers.Conv2D(flt, (1,1))(dwd)
+    conv3 = Conv2D(flt*4, 1,activation='relu')(conv3)
+    dw = layers.DepthwiseConv2D((5,5), padding='same')(conv3)
+    dwd = layers.DepthwiseConv2D((7,7), padding='same', dilation_rate=3)(dw)
+    pw = layers.Conv2D(flt*4, (1,1))(dwd)
     Lconv3=convcopy*pw
-    pool3 = MaxPooling2D(pool_size=(2, 2))(Lconv3)
+    conv3 = Conv2D(flt*4, 1,activation='relu')(Lconv3)
+    Fconv3=convcopy+conv3
+    print(Lconv2.shape)
+    print(conv3.shape)
+    print(Lconv3.shape)
+    pool3 = MaxPooling2D(pool_size=(2, 2))(Fconv3)
 
-    conv4 = Conv2D(flt*8,activation='relu', padding='same')(pool3)
+    conv4 = Conv2D(flt*8,(7,7),activation='relu', padding='same')(pool3)
+    conv4= layers.BatchNormalization(epsilon=1.001e-5)(conv4)
+    conv4= layers.BatchNormalization( epsilon=1.001e-5)(conv4)
     convcopy= conv4
-    dw = layers.DepthwiseConv2D(flt,(5,5), padding='same',groups=flt)(conv1)
-    dwd = layers.DepthwiseConv2D(flt,(7,7), padding='same',groups=flt, dilation_rate=3)(dw)
-    pw = layers.Conv2D(flt, (1,1))(dwd)
+    conv4 = Conv2D(flt*8, 1,activation='relu')(conv4)
+    dw = layers.DepthwiseConv2D((5,5), padding='same')(conv4)
+    dwd = layers.DepthwiseConv2D((7,7), padding='same', dilation_rate=3)(dw)
+    pw = layers.Conv2D(flt*8, (1,1))(dwd)
+    print("pw=", pw.shape,"   ","convcopy4=", convcopy.shape)
     Lconv4=convcopy*pw
-    pool4 = MaxPooling2D(pool_size=(2, 2))(Lconv4)
+    conv4 = Conv2D(flt*8, 1,activation='relu')(Lconv4)
+    Fconv4=convcopy+conv4
+    print(Lconv4.shape)
+    pool4 = MaxPooling2D(pool_size=(2, 2))(Fconv4)
 
-    conv5 = Conv2D(flt*16, (3, 3), activation='relu', padding='same')(pool4)
-    conv5 = Conv2D(flt*8, (3, 3), activation='relu', padding='same')(conv5)
+    conv5 = Conv2D(flt*16, (7,7), activation='relu', padding='same')(pool4)
+    conv5 = Conv2D(flt*8, (7,7), activation='relu', padding='same')(conv5)
 
     up6 = concatenate([Conv2DTranspose(flt*8, (2, 2), strides=(2, 2), padding='same')(conv5), Lconv4], axis=3)
-    conv6 = Conv2D(flt*8, (3, 3), activation='relu', padding='same')(up6)
-    conv6 = Conv2D(flt*4, (3, 3), activation='relu', padding='same')(conv6)
+    conv6 = Conv2D(flt*8, (7, 7), activation='relu', padding='same')(up6)
+    conv6 = Conv2D(flt*4, (7, 7), activation='relu', padding='same')(conv6)
 
     up7 = concatenate([Conv2DTranspose(flt*4, (2, 2), strides=(2, 2), padding='same')(conv6), Lconv3], axis=3)
-    conv7 = Conv2D(flt*4, (3, 3), activation='relu', padding='same')(up7)
-    conv7 = Conv2D(flt*2, (3, 3), activation='relu', padding='same')(conv7)
+    conv7 = Conv2D(flt*4, (7, 7), activation='relu', padding='same')(up7)
+    conv7 = Conv2D(flt*2, (7, 7), activation='relu', padding='same')(conv7)
 
     up8 = concatenate([Conv2DTranspose(flt*2, (2, 2), strides=(2, 2), padding='same')(conv7), Lconv2], axis=3)
-    conv8 = Conv2D(flt*2, (3, 3), activation='relu', padding='same')(up8)
-    conv8 = Conv2D(flt, (3, 3), activation='relu', padding='same')(conv8)
+    conv8 = Conv2D(flt*2, (7, 7), activation='relu', padding='same')(up8)
+    conv8 = Conv2D(flt, (7, 7), activation='relu', padding='same')(conv8)
 
     up9 = concatenate([Conv2DTranspose(flt, (2, 2), strides=(2, 2), padding='same')(conv8), Lconv1], axis=3)
-    conv9 = Conv2D(flt, (3, 3), activation='relu', padding='same')(up9)
-    conv9 = Conv2D(flt, (3, 3), activation='relu', padding='same')(conv9)
+    conv9 = Conv2D(flt, (7, 7), activation='relu', padding='same')(up9)
+    conv9 = Conv2D(flt, (7, 7), activation='relu', padding='same')(conv9)
 
     conv10 = Conv2D(1, (1, 1), activation='sigmoid')(conv9)
 
