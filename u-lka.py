@@ -59,21 +59,24 @@ def dice_coef_loss(y_true, y_pred):
 def get_unet(img_rows, img_cols, flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
     """build and compile Neural Network"""
 
-    print "start building NN"
+    print ("start building NN")
     inputs = Input((img_rows, img_cols, 1))
 
-    conv1 = Conv2D(flt, activation='relu', padding='same')(inputs)
+    conv1 = Conv2D(flt,(7,7),activation='relu', padding='same')(inputs)
+    conv1= layers.BatchNormalization(epsilon=1.001e-5)(conv1)
+    conv1= layers.BatchNormalization( epsilon=1.001e-5)(conv1)
+    conv1 = Conv2D(flt, 1,activation='relu')(conv1)
     convcopy= conv1
-    dw = layers.DepthwiseConv2D(flt,(5,5), padding='same',groups=flt)(conv1)
-    dwd = layers.DepthwiseConv2D(flt,(7,7), padding='same',groups=flt, dilation_rate=3)(dw)
+    dw = layers.DepthwiseConv2D((5,5), padding='same')(conv1)
+    dwd = layers.DepthwiseConv2D((7,7), padding='same', dilation_rate=3)(dw)
     pw = layers.Conv2D(flt, (1,1))(dwd)
     Lconv1=convcopy*pw
     pool1 = MaxPooling2D(pool_size=(2, 2))(Lconv1)
 
     conv2 = Conv2D(flt*2, activation='relu', padding='same')(pool1)
     convcopy= conv2
-    dw = layers.DepthwiseConv2D(flt,(5,5), padding='same',groups=flt)(conv2)
-    dwd = layers.DepthwiseConv2D(flt,(7,7), padding='same',groups=flt, dilation_rate=3)(dw)
+    dw = layers.DepthwiseConv2D((5,5), padding='same',groups=flt)(conv2)
+    dwd = layers.DepthwiseConv2D((7,7), padding='same',groups=flt, dilation_rate=3)(dw)
     pw = layers.Conv2D(flt, (1,1))(dwd)
     Lconv2=convcopy*pw
     pool2 = MaxPooling2D(pool_size=(2, 2))(Lconv2)
@@ -139,13 +142,13 @@ def train(fold, plane, batch_size, nb_epoch,init_lr):
         initial learning rate
     """
 
-    print "number of epoch: ", nb_epoch
-    print "learning rate: ", init_lr
+    print ("number of epoch: ", nb_epoch)
+    print ("learning rate: ", init_lr)
 
     # --------------------- load and preprocess training data -----------------
-    print '-'*80
-    print '         Loading and preprocessing train data...'
-    print '-'*80
+    print ('-'*80)
+    print ('         Loading and preprocessing train data...')
+    print ('-'*80)
 
     imgs_train, imgs_mask_train = load_train_data(fold, plane)
 
