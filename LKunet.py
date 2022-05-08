@@ -63,11 +63,9 @@ def get_unet(img_rows, img_cols, flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
 
     conv1 = Conv2D(flt,(3,3),activation='relu', padding='same')(inputs)
     conv11 = Conv2D(flt, (3, 3), activation='relu', padding='same')(conv1)
-    conv1= layers.BatchNormalization(epsilon=1.001e-5)(conv11)
-    conv1= layers.BatchNormalization( epsilon=1.001e-5)(conv1)
-    convcopy= conv1
-    conv1 = Conv2D(flt, 1,activation='relu')(conv1)
-    dw = layers.DepthwiseConv2D((5,5), padding='same')(conv1)
+    convcopy= conv11
+    conv1 = Conv2D(flt, 1,activation='relu')(conv11)
+    dw = layers.DepthwiseConv2D((1,1), padding='same')(conv1)
     dwd = layers.DepthwiseConv2D((7,7), padding='same', dilation_rate=3)(dw)
     pw = layers.Conv2D(flt, (1,1))(dwd)
     Lconv1=convcopy*pw
@@ -78,11 +76,11 @@ def get_unet(img_rows, img_cols, flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
 
     conv2 = Conv2D(flt*2, (3,3),activation='relu', padding='same')(pool1)
     conv22 = Conv2D(flt*2, (3, 3), activation='relu', padding='same')(conv2)
-    conv2= layers.BatchNormalization(epsilon=1.001e-5)(conv22)
-    conv2= layers.BatchNormalization( epsilon=1.001e-5)(conv2)
-    convcopy= conv2
-    conv2 = Conv2D(flt*2, 1,activation='relu')(conv2)
-    dw = layers.DepthwiseConv2D((5,5), padding='same')(conv2)
+    #conv2= layers.BatchNormalization(epsilon=1.001e-5)(conv22)
+    #conv2= layers.BatchNormalization( epsilon=1.001e-5)(conv2)
+    convcopy= conv22
+    conv2 = Conv2D(flt*2,3,activation='relu')(conv22)
+    dw = layers.DepthwiseConv2D((1,1), padding='same')(conv2)
     dwd = layers.DepthwiseConv2D((7,7), padding='same', dilation_rate=3)(dw)
     pw = layers.Conv2D(flt*2, (1,1))(dwd)
     Lconv2=convcopy*pw
@@ -93,11 +91,11 @@ def get_unet(img_rows, img_cols, flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
 
     conv3 = Conv2D(flt*4,(3,3),activation='relu', padding='same')(pool2)
     conv33 = Conv2D(flt*4, (3, 3), activation='relu', padding='same')(conv3)
-    conv3= layers.BatchNormalization(epsilon=1.001e-5)(conv33)
-    conv3= layers.BatchNormalization( epsilon=1.001e-5)(conv3)
-    convcopy= conv3
-    conv3 = Conv2D(flt*4, 1,activation='relu')(conv3)
-    dw = layers.DepthwiseConv2D((5,5), padding='same')(conv3)
+    #conv3= layers.BatchNormalization(epsilon=1.001e-5)(conv33)
+    #conv3= layers.BatchNormalization( epsilon=1.001e-5)(conv3)
+    convcopy= conv33
+    conv3 = Conv2D(flt*4, 3,activation='relu')(conv33)
+    dw = layers.DepthwiseConv2D((1,1), padding='same')(conv3)
     dwd = layers.DepthwiseConv2D((7,7), padding='same', dilation_rate=3)(dw)
     pw = layers.Conv2D(flt*4, (1,1))(dwd)
     Lconv3=convcopy*pw
@@ -110,11 +108,11 @@ def get_unet(img_rows, img_cols, flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
 
     conv4 = Conv2D(flt*8,(3,3),activation='relu', padding='same')(pool3)
     conv44 = Conv2D(flt*8, (3, 3), activation='relu', padding='same')(conv4)
-    conv4= layers.BatchNormalization(epsilon=1.001e-5)(conv44)
-    conv4= layers.BatchNormalization( epsilon=1.001e-5)(conv4)
-    convcopy= conv4
-    conv4 = Conv2D(flt*8, 1,activation='relu')(conv4)
-    dw = layers.DepthwiseConv2D((5,5), padding='same')(conv4)
+    #conv4= layers.BatchNormalization(epsilon=1.001e-5)(conv44)
+    #conv4= layers.BatchNormalization( epsilon=1.001e-5)(conv4)
+    convcopy= conv44
+    conv4 = Conv2D(flt*8, 3,activation='relu')(conv44)
+    dw = layers.DepthwiseConv2D((1,1), padding='same')(conv4)
     dwd = layers.DepthwiseConv2D((7,7), padding='same', dilation_rate=3)(dw)
     pw = layers.Conv2D(flt*8, (1,1))(dwd)
     print("pw=", pw.shape,"   ","convcopy4=", convcopy.shape)
