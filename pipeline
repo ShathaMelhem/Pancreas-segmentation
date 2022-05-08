@@ -23,16 +23,16 @@ XMAX=192
 epoch=10
 init_lr=1e-5
 # model to test
-model_test=unet_fd${cur_fold}_Z_ep${epoch}_lr${init_lr}
+model_test=LKunet_fd${cur_fold}_Z_ep${epoch}_lr${init_lr}
 # if want to view visualization of model's prediction slice by slice, set vis to true
-vis=true
+vis=false
 
 # ---------------- programs -------------------
 # slice the 3d volumn to 2d slices
-python pslice.py ${DATADIR} ${ORGAN_NUMBER} ${FOLDS} ${LOW_RANGE} ${HIGH_RANGE}
+#python pslice.py ${DATADIR} ${ORGAN_NUMBER} ${FOLDS} ${LOW_RANGE} ${HIGH_RANGE}
 
 # create data for training
-python data.py ${DATADIR} ${cur_fold} Z ${ZMAX} ${YMAX} ${XMAX} ${MARGIN} ${ORGAN_NUMBER} ${LOW_RANGE} ${HIGH_RANGE}
+#python data.py ${DATADIR} ${cur_fold} Z ${ZMAX} ${YMAX} ${XMAX} ${MARGIN} ${ORGAN_NUMBER} ${LOW_RANGE} ${HIGH_RANGE}
 
 # train the model
 python unet.py ${DATADIR} ${cur_fold} Z ${epoch} ${init_lr}
