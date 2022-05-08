@@ -198,7 +198,7 @@ def train(fold, plane, batch_size, nb_epoch,init_lr):
     print ('		Fitting model...')
     print ('-'*80)
 
-    ver = 'unet_fd%s_%s_ep%s_lr%s.csv'%(cur_fold, plane, epoch, init_lr)
+    ver = 'LKunet_fd%s_%s_ep%s_lr%s.csv'%(cur_fold, plane, epoch, init_lr)
     csv_logger = CSVLogger(log_path + ver)
     model_checkpoint = ModelCheckpoint(model_path + ver + ".h5",
                                        monitor='loss',
