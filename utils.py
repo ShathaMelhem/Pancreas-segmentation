@@ -9,21 +9,11 @@ data_path = sys.argv[1]
 
 print ("data_path: ", data_path)
 
-def clahe_equalized(imgs):
-    assert (len(imgs.shape)==4)  #4D arrays
-    assert (imgs.shape[1]==1)  #check the channel is 1
-    #create a CLAHE object (Arguments are optional).
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
-    imgs_equalized = np.empty(imgs.shape)
-    for i in range(imgs.shape[0]):
-        imgs_equalized[i,0] = clahe.apply(np.array(imgs[i,0], dtype = np.uint8))
-    return imgs_equalized
 
 def preprocess(imgs):
     """add one more axis as tf require"""
     imgs = imgs[..., np.newaxis]
-    imags=clahe_equalized(imgs)
-    return imags
+    return imgs
 
 def preprocess_front(imgs):
     imgs = imgs[np.newaxis, ...]
