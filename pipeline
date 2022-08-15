@@ -35,7 +35,7 @@ vis=false
 #python data.py ${DATADIR} ${cur_fold} Z ${ZMAX} ${YMAX} ${XMAX} ${MARGIN} ${ORGAN_NUMBER} ${LOW_RANGE} ${HIGH_RANGE}
 
 # train the model
-python unet.py ${DATADIR} ${cur_fold} Z ${epoch} ${init_lr}
+python Mathitís U-Net.py ${DATADIR} ${cur_fold} Z ${epoch} ${init_lr}
 
 # test the model
 #python testvis.py ${DATADIR} ${model_test} ${cur_fold} Z ${ZMAX} ${YMAX} ${XMAX} ${HIGH_RANGE} ${LOW_RANGE} ${MARGIN} ${vis}
