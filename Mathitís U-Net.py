@@ -1,5 +1,5 @@
 """
-This code is to build and train 2D U-Net
+This code is to build and train 2D Mathitís U-Net
 """
 import numpy as np
 import sys
