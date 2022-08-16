@@ -53,6 +53,7 @@ def get_unet(img_rows, img_cols, flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
     inputs = Input((img_rows, img_cols, 1))
 
     convMain =Conv2D(flt, (7, 7), activation='relu', padding='same')(inputs)
+    # M-WRes block
     conv1p1 = Conv2D(flt, (3, 3), activation='relu', padding='same')(convMain)
     drop1p1= Dropout(0.3)(conv1p1)
     conv1p1 = Conv2D(flt, (3, 3), activation='relu', padding='same')(drop1p1)
@@ -62,9 +63,11 @@ def get_unet(img_rows, img_cols, flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
     conv1p2 =Conv2D(flt, (3, 3), activation='relu', padding='same')(drop1p2)
 
     Fadd1= Add()([convMain, conv1p1,conv1p2])
+    
     pool1 = MaxPooling2D(pool_size=(2, 2))(Fadd1)
 
 #######################################################################
+# Mathitís block 1
     copy_2=Conv2D(flt*2, (1, 1), activation='relu', padding='same') (pool1)
     copy2=copy_2
     print(copy2.shape)
@@ -80,6 +83,7 @@ def get_unet(img_rows, img_cols, flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
     Fadd2= Add()([copy2, conv2p1,conv2p2])
     pool2 = MaxPooling2D(pool_size=(2, 2))(Fadd2)
 ####################################################################
+    # Mathitís block 2
     copy_3=Conv2D(flt*4, (1, 1), activation='relu', padding='same') (pool2)
     copy3=copy_3
     print(copy3.shape)
@@ -94,6 +98,7 @@ def get_unet(img_rows, img_cols, flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
     Fadd3= Add()([copy3, conv3p1,conv3p2])
     pool3 = MaxPooling2D(pool_size=(2, 2))(Fadd3)
 ######################################################################
+    # Mathitís block 3
     copy_4=Conv2D(flt*8, (1, 1), activation='relu', padding='same') (pool3)
     copy4=copy_4
     conv4p1 = Conv2D(flt*8, (3, 3), activation='relu', padding='same')(pool3)
@@ -114,6 +119,7 @@ def get_unet(img_rows, img_cols, flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
 
     up6 = concatenate([Conv2DTranspose(flt*8, (2, 2), strides=(2, 2), padding='same')(conv5), Fadd4], axis=3)
     #conv6 = Conv2D(flt*8, (3, 3), activation='relu', padding='same')(up6)
+    # Mathitís block 4
     copy_6=Conv2D(flt*8, (1, 1), activation='relu', padding='same') (up6)
     copy6=copy_6
     conv6p1 = Conv2D(flt*8, (3, 3), activation='relu', padding='same')(copy_6)
@@ -129,6 +135,7 @@ def get_unet(img_rows, img_cols, flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
 ###############################################################################################################
     up7 = concatenate([Conv2DTranspose(flt*4, (2, 2), strides=(2, 2), padding='same')(conv6), Fadd3], axis=3)
     #conv7 = Conv2D(flt*4, (3, 3), activation='relu', padding='same')(up7)
+    # Mathitís block 5
     copy_7=Conv2D(flt*4, (1, 1), activation='relu', padding='same') (up7)
     copy7=copy_7
     conv7p1 = Conv2D(flt*4, (3, 3), activation='relu', padding='same')(copy_7)
@@ -144,6 +151,7 @@ def get_unet(img_rows, img_cols, flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
 ##############################################################################################################
     up8 = concatenate([Conv2DTranspose(flt*2, (2, 2), strides=(2, 2), padding='same')(conv7), Fadd2], axis=3)
     #conv8 = Conv2D(flt*2, (3, 3), activation='relu', padding='same')(up8)
+    # Mathitís block 6
     copy_8=Conv2D(flt*2, (1, 1), activation='relu', padding='same') (up8)
     copy8=copy_8
     conv8p1 = Conv2D(flt*2, (3, 3), activation='relu', padding='same')(copy_8)
@@ -159,6 +167,7 @@ def get_unet(img_rows, img_cols, flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
 ################################################################################################################
     up9 = concatenate([Conv2DTranspose(flt, (2, 2), strides=(2, 2), padding='same')(conv8), Fadd1], axis=3)
     #conv9 = Conv2D(flt, (3, 3), activation='relu', padding='same')(up9)
+    # Mathitís block 7
     copy_9=Conv2D(flt, (1, 1), activation='relu', padding='same') (up9)
     copy9=copy_9
     conv9p1 = Conv2D(flt, (3, 3), activation='relu', padding='same')(copy_9)
