@@ -2,7 +2,7 @@
 
 # Introduction
 
-This is the code repository for the abstract of our new Mathitís U-Net.In our work, we were inspired by Resnet and Inception principles.
+This is the code repository for the abstract of our new Mathitís U-Net.In our work, we inspired by Resnet and Inception principles.
 Mathitís U-Net containes the main component of  Mathitís block. this block was added to enhance the performance of the original U-net in terms of DSC and provide a robust 
 version of unet that proper for pancreas segmentation.
 
