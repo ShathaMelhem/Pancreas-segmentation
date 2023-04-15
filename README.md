@@ -27,6 +27,7 @@ utils.py|	the common functions
 
 # References
 [1]https://github.com/snapfinger/pancreas-seg
+
 [2] Y. Zhou, L. Xie, W. Shen, Y. Wang, E. Fishman and A. Yuille, "A Fixed-Point Model for Pancreas Segmentation in Abdominal CT Scans", Proc. MICCAI, 2017
 
 [3] H. Roth, L. Lu, A Farag, H-C Shin, J Liu, E. Turkbey, and R. M. Summers, "DeepOrgan: Multi-level deep convolutional networks for automated pancreas segmentation", Proc. MICCAI, 2015.
