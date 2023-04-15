@@ -26,11 +26,12 @@ init.py	|the initialization functions
 utils.py|	the common functions
 
 # References
-[1] Y. Zhou, L. Xie, W. Shen, Y. Wang, E. Fishman and A. Yuille, "A Fixed-Point Model for Pancreas Segmentation in Abdominal CT Scans", Proc. MICCAI, 2017
+[1]https://github.com/snapfinger/pancreas-seg
+[2] Y. Zhou, L. Xie, W. Shen, Y. Wang, E. Fishman and A. Yuille, "A Fixed-Point Model for Pancreas Segmentation in Abdominal CT Scans", Proc. MICCAI, 2017
 
-[2] H. Roth, L. Lu, A Farag, H-C Shin, J Liu, E. Turkbey, and R. M. Summers, "DeepOrgan: Multi-level deep convolutional networks for automated pancreas segmentation", Proc. MICCAI, 2015.
+[3] H. Roth, L. Lu, A Farag, H-C Shin, J Liu, E. Turkbey, and R. M. Summers, "DeepOrgan: Multi-level deep convolutional networks for automated pancreas segmentation", Proc. MICCAI, 2015.
 
-[3] O. Ronneberger, P. Fischer, and T. Brox, "U-Net: Convolutional Networks for Biomedical Image Segmentation", Proc. MICCAI, 2015.
+[4] O. Ronneberger, P. Fischer, and T. Brox, "U-Net: Convolutional Networks for Biomedical Image Segmentation", Proc. MICCAI, 2015.
 
-[4] Liu, Yijun, and Shuang Liu. "U-net for pancreas segmentation in abdominal CT scans." IEEE international symposium on biomedical imaging. Vol. 2018. 2018.
+[5] Liu, Yijun, and Shuang Liu. "U-net for pancreas segmentation in abdominal CT scans." IEEE international symposium on biomedical imaging. Vol. 2018. 2018.
  
