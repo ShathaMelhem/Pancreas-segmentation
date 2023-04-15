@@ -26,7 +26,7 @@ init.py	|the initialization functions
 utils.py|	the common functions
 
 # References
-[1]https://github.com/snapfinger/pancreas-seg
+[1]https://github.com/snapfinger/pancreas-seg " our code is adapted from this link, except the mathitis block" 
 
 [2] Y. Zhou, L. Xie, W. Shen, Y. Wang, E. Fishman and A. Yuille, "A Fixed-Point Model for Pancreas Segmentation in Abdominal CT Scans", Proc. MICCAI, 2017
 
