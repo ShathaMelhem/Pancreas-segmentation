@@ -237,7 +237,7 @@ def get_unet(img_rows, img_cols, flt=64, pool_size=(2, 2, 2), init_lr=1.0e-5):
     print ('		Fitting model...')
     print ('-'*80)
 
-    ver = 'unetfinalF_fd%s_%s_ep%s_lr%s.csv'%(cur_fold, plane, epoch, init_lr)
+    ver = 'Mathitísunet_fd%s_%s_ep%s_lr%s.csv'%(cur_fold, plane, epoch, init_lr)
     csv_logger = CSVLogger(log_path + ver)
     model_checkpoint = ModelCheckpoint(model_path + ver + ".h5",
                                        monitor='loss',
